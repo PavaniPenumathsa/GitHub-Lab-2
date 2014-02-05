@@ -1,0 +1,63 @@
+<div data-role="page" id="page1">
+    <div data-role="header">
+         <h1>Search Ebay</h1>
+
+    </div>
+    <p>Current Location</p>
+    <div id="map"></div>
+    <div data-role="content">
+        <table>
+            <tr>
+                <td> <b>ProductName:</b> 
+                </td>
+                <td>
+                    <input id="myproduct" data-bind='value: productName' />
+                </td>
+                <td>
+                    <button id="Search">Search</button>
+                </td>
+            </tr>
+        </table>
+        <div id="results"></div>
+    </div>
+</div>
+<script>
+    function _cb_findItemsByKeywords(root) {
+        var items = root.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+        var html = [];
+        html.push('<table width="100%" border="0" cellspacing="0" cellpadding="3"><tbody>');
+        for (var i = 0; i < items.length; ++i) {
+            var item = items[i];
+            var title = item.title;
+            var pic = item.galleryURL;
+            var viewitem = item.viewItemURL;
+            if (null != title && null != viewitem) {
+                html.push('<tr><td>' + '<img src="' + pic + '" border="0">' + '</td>' +
+                    '<td><label id="' + viewitem + '">' + title + '</label></td></tr>');
+            }
+        }
+        html.push('</tbody></table>');
+        document.getElementById("results").innerHTML = html.join("");
+    }
+
+    var urlfilter = "";
+
+    function buildURLArray() {
+        for (var i = 0; i < filterarray.length; i++) {
+            var itemfilter = filterarray[i];
+            for (var index in itemfilter) {
+                if (itemfilter[index] !== "") {
+                    if (itemfilter[index] instanceof Array) {
+                        for (var r = 0; r < itemfilter[index].length; r++) {
+                            var value = itemfilter[index][r];
+                            urlfilter += "&itemFilter\(" + i + "\)." + index + "\(" + r + "\)=" + value;
+                        }
+                    } else {
+                        urlfilter += "&itemFilter\(" + i + "\)." + index + "=" + itemfilter[index];
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
